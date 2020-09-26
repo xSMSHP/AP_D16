@@ -228,13 +228,12 @@ class A6:
                 self.U_base.append(float(l[0]))
     
     def plot(self):
-        print('Maxima: ' + str(self.theta[4]) + ' , ' + str(self.theta[12]) + ' , ' + str(self.theta[19]))
+        print('Maxima: ' + str(self.theta[4]) + ' , ' + str(self.theta[12]))
         plt.figure()
         plt.plot(self.theta, self.U_base, 'ro', label = 'Direktstrahl')
         plt.plot(self.theta, self.U, 'bo', label = 'mit Gitter')
         plt.axvspan(self.theta[2], self.theta[5], color = 'purple', alpha = 0.5)
         plt.axvspan(self.theta[10], self.theta[13], color = 'purple', alpha = 0.5)
-        plt.axvspan(self.theta[17], self.theta[20], color = 'purple', alpha = 0.5)
         plt.xlabel(r'Winkel $2\theta$ [$^\circ$]')
         plt.ylabel('U [V]')
         plt.legend()
