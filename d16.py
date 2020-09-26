@@ -99,14 +99,14 @@ class A2:
         guess_phase = 0
         amp = (HPav - TPav) / 2
         
-        optimize_func = lambda x: amp * np.sin(np.pi / self.average() * t + x[0]) + HPav / 2 - self.U
-        est_phase, est_mean = leastsq(optimize_func, [guess_phase, guess_mean])[0]
+        optimize_func = lambda x: amp * np.sin(np.pi / self.average() * t + x[0]) + guess_mean - self.U
+        est_phase = leastsq(optimize_func, [guess_phase])[0]
         
-        print('Amplitude: ' + str(amp) + '  Phase: ' + str(est_phase) + '   Höhe: ' + str(est_mean))
+        print('Amplitude: ' + str(amp) + '  Phase: ' + str(est_phase) + '   Höhe: ' + str(guess_mean))
         
         plt.figure()
         plt.plot(self.x, self.U, 'ro')
-        plt.plot(np.linspace(30, 51, 1000), amp * np.sin(np.pi / self.average() * np.linspace(30, 51, 1000) + est_phase) + est_mean, 'b-')
+        plt.plot(np.linspace(30, 51, 1000), amp * np.sin(np.pi / self.average() * np.linspace(30, 51, 1000) + est_phase) + guess_mean, 'b-')
         plt.vlines(30, 0, 12, 'k')
         plt.xlabel('x [cm]')
         plt.ylabel('U [V]')
@@ -144,7 +144,7 @@ class A3:
             var += (out - x) ** 2
         var = np.sqrt(var / (len(self.dx) - 1))
             
-        print('n = ' + str(1 + out / self.d) + '  delta dx = ' + str(var))
+        print('dx = ' + str(out) + ' n = ' + str(1 + out / self.d) + '  delta dx = ' + str(var))
 
 class A4:
     def __init__(self, file, name):
@@ -198,8 +198,8 @@ class A5:
         plt.figure()
         plt.plot(self.alpha, self.U, 'ro', label = 'Messwerte')
         plt.plot(self.alpha, self.U, 'r-')
-        plt.vlines(np.arcsin(np.arange(0, self.n, 1) * self.lam / self.d) * 360 / (2 * np.pi), 0, 6.5, color = 'blue', label = 'theoretische Maxima')
-        plt.vlines(np.arcsin((2 * np.arange(1, self.n - 1, 1) - 1)* self.lam / (2 * self.d)) * 360 / (2 * np.pi), 0, 6.5, color = 'green', label = 'theoretische Minima')
+        plt.vlines(2 * np.arcsin(np.arange(0, self.n, 1) * self.lam / self.d) * 360 / (2 * np.pi), 0, 6.5, color = 'blue', label = 'theoretische Maxima')
+        plt.vlines(2 * np.arcsin((2 * np.arange(1, self.n, 1) - 1) * self.lam / (2 * self.d)) * 360 / (2 * np.pi), 0, 6.5, color = 'green', label = 'theoretische Minima')
         plt.xlabel(r'Winkel $\alpha$ [$^\circ$]')
         plt.ylabel('U [V]')
         plt.legend()
@@ -247,7 +247,7 @@ a1 = A1(open('a1.txt', 'r'), 'a1')
 a1.plot()
 
 a2 = A2(open('a2.txt', 'r'), 'a2')
-print('lambda = ' + str(4 * a2.average()) + ' ; delta lambda = ' + str(a2.variance()))
+print('lambda = ' + str(2 * a2.average()) + ' ; delta lambda = ' + str(a2.variance()))
 a2.plot()
 
 a3 = A3(open('a3.txt', 'r'), 2)
@@ -255,7 +255,7 @@ a3 = A3(open('a3.txt', 'r'), 2)
 a4 = A4(open('a4.txt', 'r'), 'a4')
 a4.plot()
 
-a5 = A5(open('a5.txt', 'r'), 'a5', 4, 4 * a2.average(), 8.5)
+a5 = A5(open('a5.txt', 'r'), 'a5', 3, 2 * a2.average(), 8.5)
 a5.plot()
 
 a6 = A6(open('a6.txt', 'r'), 'a6')
