@@ -183,7 +183,7 @@ class A4:
 class A5:
     def __init__(self, file, name, n, lam, d):
         self.name = name
-        self.d = d
+        self.d = d / 2
         self.n = n
         self.lam = lam
         self.alpha = []
@@ -198,8 +198,8 @@ class A5:
         plt.figure()
         plt.plot(self.alpha, self.U, 'ro', label = 'Messwerte')
         plt.plot(self.alpha, self.U, 'r-')
-        plt.vlines(2 * np.arcsin(np.arange(0, self.n, 1) * self.lam / self.d) * 360 / (2 * np.pi), 0, 6.5, color = 'blue', label = 'theoretische Maxima')
-        plt.vlines(2 * np.arcsin((2 * np.arange(1, self.n, 1) - 1) * self.lam / (2 * self.d)) * 360 / (2 * np.pi), 0, 6.5, color = 'green', label = 'theoretische Minima')
+        plt.vlines(np.arcsin(np.arange(0, self.n, 1) * self.lam / self.d) * 360 / (2 * np.pi), 0, 6.5, color = 'blue', label = 'theoretische Maxima')
+        plt.vlines(np.arcsin((2 * np.arange(1, self.n, 1) - 1) * self.lam / (2 * self.d)) * 360 / (2 * np.pi), 0, 6.5, color = 'green', label = 'theoretische Minima')
         plt.xlabel(r'Winkel $\alpha$ [$^\circ$]')
         plt.ylabel('U [V]')
         plt.legend()
