@@ -42,6 +42,18 @@ class Extremwert:
     def dist(self):
         return abs(self.HP - self.TP)
 
+class Extremwerte:
+    def __init__(self):
+        self.HP1 = 0
+        self.TP1 = 0
+        self.HP2 = 0
+        self.TP2 = 0
+        self.HPU = []
+        self.TPU = []
+    
+    def dist(self):
+        return (abs(self.HP1 - self.HP2) + abs(self.TP1 - self.TP2)) / 2
+
 class A2:
     def __init__(self, file, name):
         self.name = name
@@ -52,16 +64,22 @@ class A2:
         
         for i, line in enumerate(file):
             l = re.split(',', line)
-            if i % 2 == 0:
+            if i % 4 == 0:
                 if i is not 0:
                     self.x0.append(self.extr[-1].dist())
-                self.extr.append(Extremwert())
+                self.extr.append(Extremwerte())
             if l[0] == 'TP':
-                self.extr[-1].TP = float(l[2])
-                self.extr[-1].TPU = float(l[1])
+                self.extr[-1].TPU.append(float(l[1]))
+                if self.extr[-1].TP1 == 0:
+                    self.extr[-1].TP1 = float(l[2])
+                else:
+                    self.extr[-1].TP2 = float(l[2])
             else:
-                self.extr[-1].HP = float(l[2])
-                self.extr[-1].HPU = float(l[1])
+                self.extr[-1].HPU.append(float(l[1]))
+                if self.extr[-1].HP1 == 0:
+                    self.extr[-1].HP1 = float(l[2])
+                else:
+                    self.extr[-1].HP2 = float(l[2])
             self.x.append(float(l[2]))
             self.U.append(float(l[1]))
         
@@ -84,8 +102,10 @@ class A2:
         HP = []
         TP = []
         for ex in self.extr:
-            HP.append(ex.HPU)
-            TP.append(ex.TPU)
+            for e in ex.HPU:
+                HP.append(e)
+            for e in ex.TPU:
+                TP.append(e)
         HPav = 0
         for h in HP:
             HPav += h
@@ -99,14 +119,14 @@ class A2:
         guess_phase = 0
         amp = (HPav - TPav) / 2
         
-        optimize_func = lambda x: amp * np.sin(np.pi / self.average() * t + x[0]) + guess_mean - self.U
+        optimize_func = lambda x: amp * np.sin(2 * np.pi / self.average() * t + x[0]) + guess_mean - self.U
         est_phase = leastsq(optimize_func, [guess_phase])[0]
         
         print('Amplitude: ' + str(amp) + '  Phase: ' + str(est_phase) + '   Höhe: ' + str(guess_mean))
         
         plt.figure()
         plt.plot(self.x, self.U, 'ro')
-        plt.plot(np.linspace(30, 51, 1000), amp * np.sin(np.pi / self.average() * np.linspace(30, 51, 1000) + est_phase) + guess_mean, 'b-')
+        plt.plot(np.linspace(30, 51, 1000), amp * np.sin(2 * np.pi / self.average() * np.linspace(30, 51, 1000) + est_phase) + guess_mean, 'b-')
         plt.vlines(30, 0, 12, 'k')
         plt.xlabel('x [cm]')
         plt.ylabel('U [V]')
@@ -183,7 +203,7 @@ class A4:
 class A5:
     def __init__(self, file, name, n, lam, d):
         self.name = name
-        self.d = d / 2
+        self.d = d
         self.n = n
         self.lam = lam
         self.alpha = []
@@ -198,6 +218,8 @@ class A5:
         plt.figure()
         plt.plot(self.alpha, self.U, 'ro', label = 'Messwerte')
         plt.plot(self.alpha, self.U, 'r-')
+        print('HP ' + str(np.arcsin(np.arange(0, self.n, 1) * self.lam / self.d) * 360 / (2 * np.pi)))
+        print('TP ' + str(np.arcsin((2 * np.arange(1, self.n, 1) - 1) * self.lam / (2 * self.d)) * 360 / (2 * np.pi)))
         plt.vlines(np.arcsin(np.arange(0, self.n, 1) * self.lam / self.d) * 360 / (2 * np.pi), 0, 6.5, color = 'blue', label = 'theoretische Maxima')
         plt.vlines(np.arcsin((2 * np.arange(1, self.n, 1) - 1) * self.lam / (2 * self.d)) * 360 / (2 * np.pi), 0, 6.5, color = 'green', label = 'theoretische Minima')
         plt.xlabel(r'Winkel $\alpha$ [$^\circ$]')
@@ -232,7 +254,7 @@ class A6:
         plt.figure()
         plt.plot(self.theta, self.U_base, 'ro', label = 'Direktstrahl')
         plt.plot(self.theta, self.U, 'bo', label = 'mit Gitter')
-        plt.axvspan(self.theta[2], self.theta[5], color = 'purple', alpha = 0.5)
+        #plt.axvspan(self.theta[2], self.theta[5], color = 'purple', alpha = 0.5)
         plt.axvspan(self.theta[10], self.theta[13], color = 'purple', alpha = 0.5)
         plt.xlabel(r'Winkel $2\theta$ [$^\circ$]')
         plt.ylabel('U [V]')
