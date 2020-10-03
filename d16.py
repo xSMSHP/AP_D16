@@ -114,20 +114,20 @@ class A2:
         for t in TP:
             TPav += t
         TPav /= len(TP)
-        
-        guess_mean = np.mean(self.U)
+            
+        guess_mean = TPav
         guess_phase = 0
-        amp = (HPav - TPav) / 2
+        amp = (HPav - TPav)
         
-        optimize_func = lambda x: amp * np.sin(2 * np.pi / self.average() * t + x[0]) + guess_mean - self.U
+        optimize_func = lambda x: amp * np.sin(np.pi / self.average() * t + x[0]) +TPav - self.U
         est_phase = leastsq(optimize_func, [guess_phase])[0]
         
         print('Amplitude: ' + str(amp) + '  Phase: ' + str(est_phase) + '   Höhe: ' + str(guess_mean))
         
         plt.figure()
         plt.plot(self.x, self.U, 'ro')
-        plt.plot(np.linspace(30, 51, 1000), amp * np.sin(2 * np.pi / self.average() * np.linspace(30, 51, 1000) + est_phase) + guess_mean, 'b-')
-        plt.vlines(30, 0, 12, 'k')
+        plt.plot(np.linspace(30, 51, 1000),amp * np.sin(np.pi / self.average() * np.linspace(30, 51, 1000) + est_phase) + guess_mean, 'b-')
+        plt.vlines(30, -10, 13, 'k')
         plt.xlabel('x [cm]')
         plt.ylabel('U [V]')
         plt.legend(['Messwerte', 'Extrapolation','Metallplatte'], loc = 5)
